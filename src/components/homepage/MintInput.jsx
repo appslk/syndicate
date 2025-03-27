@@ -1553,8 +1553,7 @@ const MintInput = () => {
   
     } else {
        // Redirect to MetaMask install page
-       window.open = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
-
+      window.location.href = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
     }
   };
   
