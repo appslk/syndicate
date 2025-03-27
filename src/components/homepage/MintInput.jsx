@@ -1480,54 +1480,43 @@ const MintInput = () => {
 
 
   const connectWallet = async () => {
-    if (window.ethereum) {
+    if (typeof window.ethereum !== "undefined") {
       const web3 = new Web3(window.ethereum);
+      
       try {
-        // Check if the user is already connected
+        // Disconnect wallet if already connected
         if (account) {
-          // If the wallet is already connected, disconnect it
           setAccount(null);
           console.log("Disconnected from wallet");
           return;
         }
-        
-        // Check if the user is on mobile
+  
+        // Detect if user is on mobile
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-        // Mobile deep link handling
-        if (isMobile) {
-          const dAppURL = "https://syndicate-ashen.vercel.app/";
   
-          // Deep link for MetaMask
-          const deepLinkURL = `metamask://dapp/${dAppURL}`;
-          // For Trust Wallet, use:
-          // const deepLinkURL = `trust://browser/${dAppURL}`;
-  
-          // Try to open MetaMask or Trust Wallet deep link
-          window.location.href = deepLinkURL;
+        // Check if MetaMask is available on mobile
+        if (isMobile && typeof window.ethereum === "undefined") {
+          // Redirect to MetaMask App
+          window.location.href = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
           return;
         }
-    
+  
         // Check the current network ID
         const networkId = await web3.eth.net.getId();
-    
-        // Pulse v4 testnet network ID (assuming Pulse v4 testnet is "0x2b0")
         const PULSE_V4_NETWORK_ID = 0x3af;
-    
+  
         if (networkId !== PULSE_V4_NETWORK_ID) {
-          // Request to switch to Pulse v4 testnet if not on it
           try {
             await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
+              method: "wallet_switchEthereumChain",
               params: [{ chainId: `0x${PULSE_V4_NETWORK_ID.toString(16)}` }],
             });
             console.log("Successfully switched to Pulse v4 testnet");
           } catch (switchError) {
             if (switchError.code === 4902) {
-              // If the network is not available in the wallet, prompt to add it
               try {
                 await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
+                  method: "wallet_addEthereumChain",
                   params: [
                     {
                       chainId: `0x${PULSE_V4_NETWORK_ID.toString(16)}`,
@@ -1537,7 +1526,7 @@ const MintInput = () => {
                         symbol: "tPLS",
                         decimals: 18,
                       },
-                      rpcUrls: ["wss://pulsechain-testnet-rpc.publicnode.com"],
+                      rpcUrls: ["https://rpc.v4.testnet.pulsechain.com"], // Fixed `wss://`
                       blockExplorerUrls: ["https://scan.v4.testnet.pulsechain.com/"],
                     },
                   ],
@@ -1552,15 +1541,19 @@ const MintInput = () => {
         } else {
           console.log("Already connected to Pulse v4 testnet");
         }
-    
-        // Proceed with connecting the wallet if not already connected
+  
+        // Proceed with connecting the wallet
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAccount(accounts[0]);
+  
       } catch (error) {
         console.error("Wallet connection failed:", error);
       }
+  
     } else {
       alert("Please install MetaMask!");
+      // Redirect to MetaMask install page
+      window.location.href = "https://metamask.io/download.html";
     }
   };
   
