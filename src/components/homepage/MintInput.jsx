@@ -1497,7 +1497,8 @@ const MintInput = () => {
         // Check if MetaMask is available on mobile
         if (isMobile && typeof window.ethereum === "undefined") {
           // Redirect to MetaMask App
-          window.location.href = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
+          //window.location.href = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
+          window.open = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
           return;
         }
   
