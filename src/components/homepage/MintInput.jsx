@@ -1552,9 +1552,9 @@ const MintInput = () => {
       }
   
     } else {
-      alert("Please install MetaMask!");
-      // Redirect to MetaMask install page
-      window.location.href = "https://metamask.io/download.html";
+       // Redirect to MetaMask install page
+       window.open = "https://metamask.app.link/dapp/syndicate-ashen.vercel.app/";
+
     }
   };
   
